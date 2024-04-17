@@ -1,53 +1,48 @@
-const { application, json } = require('express');
-const http = require('http');
-const express = require('express');
-const app = express();
+const express = require('express')
+const { randomUUID } = require('crypto')
 
-// const hostname = 'localhost';
-// const port = 3000;
-const produtos = [];
-const { randomUUID } = require('crypto');
+const porta = "8080"
+const app = express()
 
-//GET
-app.get("/produto", (request, response) => {
-    return response.json(produtos);
-})
-//POST
-app.post("/produto", (request, response) => {
-    const { descricao, valor } = request.body;
-    const prod = {
-        descricao,
-        valor,
-        id: randomUUID()
+var produtos = [
+    {
+        nome: "Ratao",
+        valor: 15
     }
-    produtos.push(prod);
-    return response.json(prod);
+]
+var users = [
+    {
+        nome: "Bento",
+        Email: "bento@gmail.com"
+    }
+]
+
+
+app.use(express.json())
+app.get("/", (req, res) => {
+    return res.json({ messagem: "Ola  Mundo eu estou Aqui!" })
 })
 
-// sem express
-// const server = http.createServer((req, res) => {
-//     res.statusCode = 200;
-//     res.setHeader('Content-Type', 'application/json');
-
-//     if(req.url == "/produto"){
-//         res.end(JSON.stringify({mensagem: "url de produto"}));
-//     }
-//     else
-//         res.end(JSON.stringify({Mensagem: "Test"}));
-
-// });
-
-//com express
-app.get("/produto", (request, response) => {
-    return response.json({ mensagem: "teste" });
+app.get("/produto", (req, res) => {
+    return res.json(produtos)
 })
-//analisar dados enviados
-app.use(express.json());
 
-app.listen(3001, () => console.log('server running on port 3001'));
+app.get("/users", (req, res) => {
+    return res.json(users)
+})
 
+app.post("/produto",  (req, res) => {
+    var { nome, valor } = req.body
+    var produto = {
+        id: randomUUID(),
+        nome: nome,
+        valor: valor
+    }
 
+    produtos.push(produto)
+    return res.json(produto)
+})
 
-// server.listen(port, hostname, ()=>{
-//     console.log('Server running at http://${hostname}:${port}/')
-// })
+app.listen(porta, () => {
+    console.log('Servidor rodando na porta ${porta}')
+})
